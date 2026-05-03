@@ -164,31 +164,38 @@ async def start(_, message):
             await asyncio.sleep(0.4)
             await m.delete()
 
-        # sticker
-        try:
-            await message.reply_sticker(
+            # sticker
+            try:
+                await message.reply_sticker(
                 "CAACAgUAAxkBAAEXm-JplJOyujCdKOZhh8m5gC4BJpW52AACaxwAA2epVnjNNttcc5jLHgQ"
-            )
-        except:
-            pass
-
-        buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("• ᴍʏ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs •", callback_data='help')],
-            [
-                InlineKeyboardButton('• ᴜᴘᴅᴀᴛᴇs', url=UPDATE_CHANNEL),
+                )
+            except:
+                pass
+ 
+            buttons = InlineKeyboardMarkup([
+                [InlineKeyboardButton("• ᴍʏ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs •", callback_data='help')],
+                [
+                InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇs', url=UPDATE_CHANNEL),
                 InlineKeyboardButton('sᴜᴘᴘᴏʀᴛ •', url=UPDATE_CHANNEL)
-            ],
-            [
-                InlineKeyboardButton('• ᴀʙᴏᴜᴛ', callback_data='about'),
-                InlineKeyboardButton('sᴏᴜʀᴄᴇ •', callback_data='source')
-            ]
-        ])
+                ],
+                [
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('sᴏᴜʀᴄᴇ', callback_data='source')
+                ]
+            ])
 
-        await message.reply_text(
-            f"👋 Hello {user.mention}\n\n🤖 Welcome to Rename Bot\nSend file to start.",
-            reply_markup=buttons,
-            disable_web_page_preview=True
-        )
+            await message.reply_text(
+                f"Hᴇʏ {user.mention} ♡\n\n"
+                "Wᴇʟᴄᴏᴍᴇ ᴛᴏ ᴛʜᴇ ᴍᴏꜱᴛ ᴀᴅᴠᴀɴᴄᴇᴅ Jɪɴᴡᴏᴏ Sᴜɴɢ Rᴇɴᴀᴍᴇ Bᴏᴛ!\n\n"
+                "» ᴡɪᴛʜ ᴍʏ ᴘᴏᴡᴇʀꜰᴜʟ ꜰᴇᴀᴛᴜʀᴇꜱ, ʏᴏᴜ ᴄᴀɴ:\n"
+                "○ Aᴅᴅ ᴄᴜsᴛᴏᴍ ᴄᴀᴘᴛɪᴏɴ ᴀɴᴅ ᴛʜᴜᴍʙɴᴀɪʟ\n"
+                "○ ᴀɴᴅ ᴀʟsᴏ ᴄᴀɴ sᴇᴛ ᴘʀᴇғɪx ᴀɴᴅ sᴜғғɪx ᴏɴ ʏᴏᴜʀ ғɪʟᴇs.⚡️\n\n"
+                "๏ ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʜᴏᴡ ᴛᴏ ᴜsᴇ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ɪɴғᴏʀᴍᴀᴛɪᴏɴ ᴀʙᴏᴜᴛ ᴍʏ ᴄᴏᴍᴍᴀɴᴅs..\n\n"
+                "›› ᴛʜɪs ʙᴏᴛ ɪs ᴅᴇᴘʟᴏʏᴇᴅ ʙʏ: <a href='https://t.me/Mr_Mohammed_29'>ᴍᴏʜᴀᴍᴍᴇᴅ</a>",
+                reply_markup=buttons,
+                disable_web_page_preview=True,
+                parse_mode="html"
+            )
 
         except Exception as e:
             print("START ERROR:", e)
@@ -541,13 +548,30 @@ async def cb(_, query: CallbackQuery):
             await query.message.edit_text("🏠 Home Menu")
 
         elif data == "about":
+
+            text = """
+
+        ⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟
+
+        Pʀᴏɢʀᴀᴍᴇʀ : <a href="https://t.me/Mr_Mohammed_29">ᴍᴏʜᴀᴍᴍᴇᴅ</a>
+        ꜰᴏᴜɴᴅᴇʀ ᴏꜰ : <a href="https://t.me/Anime_UpdatesAU">ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs</a>
+        Lɪʙʀᴀʀʏ : <a href="https://pypi.org/project/Pyrogram/">Pyʀᴏɢʀᴀᴍ 2.0</a>
+        Lᴀɴɢᴜᴀɢᴇ : <a href="https://www.python.org/downloads/">Pʏᴛʜᴏɴ 𝟹</a>
+        Dᴀᴛᴀʙᴀsᴇ : <a href="https://www.mongodb.com/">ᴍᴏɴɢᴏ ᴅʙ</a>
+        ᴄʜᴀɴɴᴇʟ : <a href="https://t.me/Anime_Updates">ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs</a>
+        ᴍʏ ꜱᴇʀᴠᴇʀ : <a href="https://t.me/AU_Bot_Discussion">ʙᴏᴛs sᴇʀᴠᴇʀ</a>
+        ʙᴜɪʟᴅ sᴛᴀᴛᴜs : <a href="https://t.me/Anime_UpdatesAU">ᴠ3 [sᴛᴀʙʟᴇ]</a>
+        """
+
             await query.message.edit_text(
-                "ℹ️ Rename Bot\n\n"
-                "Features:\n"
-                "• File Rename\n"
-                "• Metadata Engine\n"
-                "• Thumbnail Support\n"
-                "• FFmpeg Processing"
+                text,
+                
+        reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🏠 Home", callback_data="home")],
+                    [InlineKeyboardButton("❌ Close", callback_data="close")]
+                    ]),
+                    disable_web_page_preview=True,
+                    parse_mode="html"
             )
 
         elif data == "source":
