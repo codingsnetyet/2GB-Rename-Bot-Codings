@@ -222,34 +222,35 @@ bot = Client(
 @bot.on_message(filters.command("start"))
 async def start(_, message):
 
-    if await is_banned(message.from_user.id):
-        return await message.reply("🚫 Yᴏᴜ Aʀᴇ Bᴀɴɴᴇᴅ.")
-
-    await add_user(message.from_user.id)
-
-    log_event(f"User started bot: {msg.from_user.id}")
-
-    user = message.from_user
-
-    # ---------------- ANIMATION ----------------
     try:
-        m = await message.reply_text("Sʜᴀᴅᴏᴡ Oғ Mᴏɴᴀʀᴄʜ. . .")
-        await asyncio.sleep(0.5)
-        await m.edit_text("🎊")
-        await asyncio.sleep(0.5)
-        await m.edit_text("⚡")
-        await asyncio.sleep(0.5)
-        await m.edit_text("Jɪɴᴡᴏᴏ Sᴜɴɢ...")
-        await asyncio.sleep(0.5)
-        await m.delete()
-    except:
-        pass
+        if await is_banned(message.from_user.id):
+            return await message.reply("🚫 Yᴏᴜ Aʀᴇ Bᴀɴɴᴇᴅ.")
 
-    await message.reply_text(
-        get_home_text(user),
-        reply_markup=get_home_buttons(),
-        parse_mode="html"
-    )
+        await add_user(message.from_user.id)
+
+        log_event(f"User started bot: {message.from_user.id}")
+
+        user = message.from_user
+
+        # ---------------- ANIMATION ----------------
+        try:
+            m = await message.reply_text("Sʜᴀᴅᴏᴡ Oғ Mᴏɴᴀʀᴄʜ. . .")
+            await asyncio.sleep(0.5)
+            await m.edit_text("🎊")
+            await asyncio.sleep(0.5)
+            await m.edit_text("⚡")
+            await asyncio.sleep(0.5)
+            await m.edit_text("Jɪɴᴡᴏᴏ Sᴜɴɢ...")
+            await asyncio.sleep(0.5)
+            await m.delete()
+        except:
+            pass
+
+        await message.reply_text(
+            get_home_text(user),
+            reply_markup=get_home_buttons(),
+            parse_mode="html"
+        )
 
     except Exception as e:
         print("START ERROR:", e)
