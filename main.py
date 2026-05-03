@@ -964,7 +964,7 @@ async def cb(_, query: CallbackQuery):
                 await query.message.edit_text("Eʀʀᴏʀ ‼️, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇ @Mr_Mohammed_29")
                 return
 
-            # -------- CLEANUP -------- #
+           # -------- CLEANUP -------- #
             try:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -978,10 +978,11 @@ async def cb(_, query: CallbackQuery):
                     os.remove(thumb_path)
             except:
                 pass
- 
+
             await query.message.delete()
             active_tasks.pop(user_id, None)
-                # ---------------- RUN ----------------
+
+# ---------------- RUN ----------------
 keep_alive()
 
 print("BOT STARTED 🚀")
