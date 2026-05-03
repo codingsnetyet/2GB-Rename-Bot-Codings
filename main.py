@@ -367,73 +367,109 @@ async def metadata(_, msg):
 # -----------MY PlAN-------------- #
 @bot.on_message(filters.command("myplan"))
 async def myplan(_, msg):
+
     user = await get_user(msg.from_user.id) or {}
     status = "Premium" if user.get("premium") else "Free"
-    await msg.reply(f"Your plan: {status}")
 
+    if status == "Premium":
+        text = f"✨ ʜᴇʏ {msg.from_user.first_name},\n\n"
+        text += "💎 Yᴏᴜ ᴄᴜʀʀᴇɴᴛʟʏ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ **Pʀᴇᴍɪᴜᴍ Pʟᴀɴ** ✔\n"
+        text += "❤️ Tʜᴀɴᴋs Fᴏʀ Bᴜʏɪɴɢ Pʀᴇᴍɪᴜᴍ!"
+
+    else:
+        text = f"ʜᴇʏ {msg.from_user.first_name},\n\n"
+        text += "𝒀𝒐𝒖 𝑫𝒐 𝑵𝒐𝒕 𝑯𝒂𝒗𝒆 𝑨𝒏𝒚 𝑨𝒄𝒕𝒊𝒗𝒆 𝑷𝒓𝒆𝒎𝒊𝒖𝒎 𝒑𝒍𝒂𝒏𝒔,\n"
+        text += "𝑰𝒇 𝒀𝒐𝒖 𝑾𝒂𝒏𝒕 𝑻𝒐 𝑻𝒂𝒌𝒆 𝑷𝒓𝒆𝒎𝒊𝒖𝒎 𝑻𝒉𝒆𝒏 𝑪𝒍𝒊𝒄𝒌 𝑶𝒏 𝑩𝒆𝒍𝒐𝒘 𝑩𝒖𝒕𝒕𝒐𝒏 👇"
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("○ Bᴜʏ Pʀᴇᴍɪᴜᴍ ○", url="https://t.me/Mr_Mohammed_29")
+        ]
+    ])
+
+# ------------ plans ---------------#
 @bot.on_message(filters.command("plans"))
 async def plans(_, msg):
-    await msg.reply("Upgrade to Premium Plan 🚀")
 
+    text = f"""
+👋 ʜᴇʏ {msg.from_user.first_name},
+
+🎁 ᴘʀᴇᴍɪᴜᴍ ғᴇᴀᴛᴜʀᴇs :
+
+››  ᴜɴʟɪᴍɪᴛᴇᴅ ʀᴇɴᴀᴍɪɴɢ: ɴᴏ ʟɪᴍɪᴛꜱ ᴏɴ ꜰɪʟᴇꜱ  
+››  ᴇᴀʀʟʏ ᴀᴄᴄᴇꜱꜱ: ᴛʀʏ ɴᴇᴡ ꜰᴇᴀᴛᴜʀᴇꜱ ꜰɪʀꜱᴛ  
+››  ꜰᴀꜱᴛᴇʀ ꜱᴘᴇᴇᴅ: Qᴜɪᴄᴋᴇʀ ᴅᴏᴡɴʟᴏᴀᴅꜱ ᴀɴᴅ ᴜᴘʟᴏᴀᴅꜱ  
+
+➛ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀᴄᴛɪᴠᴇ ᴘʟᴀɴ ʙʏ ᴜꜱɪɴɢ : /myplan
+"""
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("○ Uᴘɢʀᴀᴅᴇ Tᴏ Pʀᴇᴍɪᴜᴍ ○", url="https://t.me/Mr_Mohammed_29")
+        ]
+    ])
+
+    await msg.reply(text, reply_markup=buttons)
+    
 # ---------------- METADATA SETTERS ----------------
 @bot.on_message(filters.command("settitle"))
 async def settitle(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /settitle text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /settitle Encoded By @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"title": text})
-    await msg.reply("Title is saved ✔")
+    await msg.reply("✅ Tɪᴛʟᴇ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("setauthor"))
 async def setauthor(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /setauthor text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Aᴜᴛʜᴏʀ\n\nExᴀᴍᴩʟᴇ:- /setauthor @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"author": text})
-    await msg.reply("Author is saved ✔")
+    await msg.reply("✅ Aᴜᴛʜᴏʀ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("setartist"))
 async def setartist(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /setartist text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Aʀᴛɪꜱᴛ\n\nExᴀᴍᴩʟᴇ:- /setartist @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"artist": text})
-    await msg.reply("Artist is saved ✔")
+    await msg.reply("✅ Aʀᴛɪꜱᴛ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("setaudio"))
 async def setaudio(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /setaudio text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Aᴜᴅɪᴏ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setaudio @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"audio": text})
-    await msg.reply("Audio is saved ✔")
+    await msg.reply("✅ Aᴜᴅɪᴏ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("setsubtitle"))
 async def setsubtitle(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /setsubtitle text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Sᴜʙᴛɪᴛʟᴇ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setsubtitle @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"subtitle": text})
-    await msg.reply("Subtitle is saved ✔")
+    await msg.reply("✅ Sᴜʙᴛɪᴛʟᴇ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("setvideo"))
 async def setvideo(_, msg):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: /setvideo text")
+        return await msg.reply("Gɪᴠᴇ Tʜᴇ Vɪᴅᴇᴏ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setvideo Encoded by @Anime_UpdatesAU")
 
     text = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"video": text})
-    await msg.reply("Video metadata is saved ✔")
+    await msg.reply("✅ Vɪᴅᴇᴏ Mᴇᴛᴀᴅᴀᴛᴀ Sᴀᴠᴇᴅ")
 # ---------------- THUMB ----------------
 @bot.on_message(filters.photo)
 async def save_thumb(_, msg):
