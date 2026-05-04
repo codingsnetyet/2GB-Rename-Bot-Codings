@@ -49,8 +49,6 @@ from pyrogram import Client, filters
 
 active_tasks = {}
 
-import time
-
 def parse_duration(value: str):
     value = value.lower().strip()
 
@@ -699,11 +697,17 @@ async def cb(_, query: CallbackQuery):
 
             user = query.from_user
 
-            await query.message.edit_text(
-                get_home_text(user),
-                reply_markup=get_home_buttons(),
-                parse_mode="HTML"
-            )
+            try:
+                await query.message.edit_text(
+                    get_home_text(user),
+        reply_markup=get_home_buttons(),
+                    parse_mode="HTML"
+                )
+            except:
+                await query.message.edit_text(
+                    get_home_text(user),
+        reply_markup=get_home_buttons()
+                )
             
         elif data == "about":
 
@@ -785,6 +789,8 @@ async def cb(_, query: CallbackQuery):
 
             if query.from_user.id != OWNER_ID:
                 return await query.answer("❌ 𝗬𝗼𝘂 𝗮𝗿𝗲 𝗻𝗼𝘁 𝗮𝘂𝘁𝗵𝗼𝗿𝗶𝘇𝗲𝗱 𝘁𝗼 𝘂𝘀𝗲 𝘁𝗵𝗶𝘀 𝗰𝗼𝗺𝗺𝗮𝗻𝗱", show_alert=True)
+
+            await query.answer()
 
             users_count = await users.count_documents({})
             
@@ -879,7 +885,7 @@ async def cb(_, query: CallbackQuery):
            <b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
            """
 
-                await query.message.edit_text(text)
+                await query.message.edit_text(text, parse_mode="HTML")
 
             file_path = await msg.download(file_name=file.file_name, progress=dprog)
 
@@ -965,7 +971,8 @@ async def cb(_, query: CallbackQuery):
             """
 
                 try:
-                    await query.message.edit_text(text)
+                    await query.message.edit_text(text, parse_mode="HTML")
+                    
                 except Exception:
                    pass
            # -------- SEND FILE -------- #
