@@ -275,7 +275,9 @@ async def set_caption(_, msg):
         return await msg.reply("🚫 Yᴏᴜ Aʀᴇ Bᴀɴɴᴇᴅ.")
 
     if len(msg.command) < 2:
-    return await msg.reply("Gɪᴠᴇ Tʜᴇ Cᴀᴩᴛɪᴏɴ\n\nExᴀᴍᴩʟᴇ:- /set_caption Welcome To Jinwoo Rename Bot @Anime_UpdatesAU")
+        return await msg.reply(
+            "Gɪᴠᴇ Tʜᴇ Cᴀᴘᴛɪᴏɴ\n\nExᴀᴍᴘʟᴇ:- /set_caption Welcome To Jinwoo Rename Bot @Anime_UpdatesAU"
+        )
         
     cap = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"caption": cap})
