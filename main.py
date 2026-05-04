@@ -1011,7 +1011,9 @@ async def cb(_, query: CallbackQuery):
 
             await query.message.delete()
             active_tasks.pop(user_id, None)
-
+            
+    except Exception as e:
+       print("Callback Error:", e)
 # ---------------- RUN ----------------
 keep_alive()
 
