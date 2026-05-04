@@ -36,8 +36,11 @@ def get_memory():
     return f"{mem:.2f} MB"
 
 
-def get_ping():
-    return "200 ms"  
+async def get_ping():
+    start = time.time()
+    await asyncio.sleep(0)
+    end = time.time()
+    return f"{round((end - start) * 1000)} ms"
 
 # ------------------------- #
 
@@ -270,6 +273,9 @@ async def set_caption(_, msg):
 
     if await is_banned(msg.from_user.id):
         return await msg.reply("🚫 Yᴏᴜ Aʀᴇ Bᴀɴɴᴇᴅ.")
+
+    if len(msg.command) < 2:
+    return await msg.reply("Gɪᴠᴇ Tʜᴇ Cᴀᴩᴛɪᴏɴ\n\nExᴀᴍᴩʟᴇ:- /set_caption Welcome To Jinwoo Rename Bot @Anime_UpdatesAU")
         
     cap = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"caption": cap})
@@ -584,13 +590,16 @@ async def status(_, msg):
     else:
         premium = "Yes"
 
+    ping = await get_ping()
+
     text = f"""
 📊 𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀
 
 👥 Usᴇʀs: {users_count}
 ⏱ Uᴘᴛɪᴍᴇ: {get_uptime()}
-⚡ Pɪɴɢ: {get_ping()}
+⚡ Pɪɴɢ: {ping}
 🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {get_memory()}
+💎 Pʀᴇᴍɪᴜᴍ: {premium}
 🧾 Vᴇʀsɪᴏɴ: v3.0
 """
 
@@ -772,14 +781,22 @@ async def cb(_, query: CallbackQuery):
         elif data == "status_refresh":
 
             users_count = await users.count_documents({})
+            
+            if not await get_premium_status(query.from_user.id):
+                premium = "No"
+            else:
+                premium = "Yes"
 
+            ping = await get_ping()
+    
             text = f"""
         📊 𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀
 
         👥 Usᴇʀs: {users_count}
         ⏱ Uᴘᴛɪᴍᴇ: {get_uptime()}
-        ⚡ Pɪɴɢ: {get_ping()}
+        ⚡ Pɪɴɢ: {ping}
         🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {get_memory()}
+        💎 Pʀᴇᴍɪᴜᴍ: {premium}
         🧾 Vᴇʀsɪᴏɴ: v3.0
         """
 
