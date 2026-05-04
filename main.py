@@ -46,6 +46,7 @@ async def get_ping():
 
 from PIL import Image
 from pyrogram import Client, filters
+from pyrogram.enums import ParseMode
 
 active_tasks = {}
 
@@ -250,7 +251,7 @@ async def start(_, message):
             await message.reply_text(
                 get_home_text(user),
                 reply_markup=get_home_buttons(),
-                parse_mode="HTML"
+                parse_mode=ParseMode.HTML
             )
         except Exception as e:
             print("HOME UI ERROR:", e)
@@ -258,7 +259,7 @@ async def start(_, message):
             # 🔥 fallback if buttons fail
             await message.reply_text(
                 get_home_text(user),
-                parse_mode="HTML"
+                parse_mode=ParseMode.HTML
             )
 
     except Exception as e:
@@ -701,7 +702,7 @@ async def cb(_, query: CallbackQuery):
                 await query.message.edit_text(
                     get_home_text(user),
         reply_markup=get_home_buttons(),
-                    parse_mode="HTML"
+                    parse_mode=ParseMode.HTML
                 )
             except:
                 await query.message.edit_text(
@@ -733,7 +734,7 @@ async def cb(_, query: CallbackQuery):
                     [InlineKeyboardButton("❌ Cʟᴏsᴇ", callback_data="close")]
                     ]),
                     disable_web_page_preview=True,
-                    parse_mode="HTML"
+                    parse_mode=ParseMode.HTML
             )
 
         elif data == "source":
@@ -856,7 +857,7 @@ async def cb(_, query: CallbackQuery):
             log_event(f"User {user_id} uploaded file: {file.file_name}")
 
             await query.message.edit_text(
-                "📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ...",
+                "⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡\n📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ...",
         reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("😞 Cᴀɴᴄᴇʟ", callback_data=f"cancel_{user_id}")]
                 ])
@@ -885,7 +886,7 @@ async def cb(_, query: CallbackQuery):
            <b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
            """
 
-                await query.message.edit_text(text, parse_mode="HTML")
+                await query.message.edit_text(text, parse_mode=ParseMode.HTML)
 
             file_path = await msg.download(file_name=file.file_name, progress=dprog)
 
@@ -937,7 +938,7 @@ async def cb(_, query: CallbackQuery):
                 thumb_path = None
 
         # -------- UPLOAD START -------- #
-            await query.message.edit_text("📤 Uᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...")
+            await query.message.edit_text("⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡\n📤 Uᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...")
 
             start_time = time.time()
             last_edit = 0
@@ -971,7 +972,7 @@ async def cb(_, query: CallbackQuery):
             """
 
                 try:
-                    await query.message.edit_text(text, parse_mode="HTML")
+                    await query.message.edit_text(text, parse_mode=ParseMode.HTML)
                     
                 except Exception:
                    pass
