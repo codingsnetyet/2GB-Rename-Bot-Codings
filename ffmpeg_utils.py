@@ -15,6 +15,7 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
         stream = ffmpeg.output(
             stream,
             output_file,
+
             codec="copy",
             map_metadata="-1",
 
@@ -27,7 +28,9 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                 "metadata:s:v:0": f"title={video}",
             },
 
-            movflags="faststart"
+            movflags="+faststart",          
+            fflags="+genpts",               
+            avoid_negative_ts="make_zero"   
         )
 
         ffmpeg.run(stream, overwrite_output=True, quiet=True)
