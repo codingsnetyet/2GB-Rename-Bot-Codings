@@ -15,17 +15,19 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
         stream = ffmpeg.output(
             stream,
             output_file,
-            codec="copy",  # 🔥 NO RE-ENCODE
+            codec="copy",
             map_metadata="-1",
 
-            metadata=f"title={title}",
-            metadata:g=f"artist={artist}",
-            metadata:g=f"author={author}",
-            metadata:s:a=f"title={audio}",
-            metadata:s:s=f"title={subtitle}",
-            metadata:s:v=f"title={video}",
+            **{
+                "metadata": f"title={title}",
+                "metadata:g:artist": artist,
+                "metadata:g:author": author,
+                "metadata:s:a:0": f"title={audio}",
+                "metadata:s:s:0": f"title={subtitle}",
+                "metadata:s:v:0": f"title={video}",
+            },
 
-            movflags="faststart"  # 🔥 VERY IMPORTANT
+            movflags="faststart"
         )
 
         ffmpeg.run(stream, overwrite_output=True, quiet=True)
