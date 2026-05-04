@@ -1017,14 +1017,18 @@ async def cb(_, query: CallbackQuery):
                    pass
            # -------- SEND FILE -------- #
             try:
-                if is_video:
+                if mode == "video":
+
                     await msg.reply_video(
                         video=final,
                         caption=caption,
                         thumb=thumb_path,
+                        supports_streaming=True,
                         progress=prog
                     )
+
                 else:
+
                     await msg.reply_document(
                         document=final,
                         file_name=new_name,
@@ -1062,6 +1066,7 @@ async def cb(_, query: CallbackQuery):
 
             await query.message.delete()
             active_tasks.pop(user_id, None)
+            user_mode.pop(user_id, None)
             
     except Exception as e:
        print("Callback Error:", e)
