@@ -50,6 +50,8 @@ from pyrogram.enums import ParseMode
 
 active_tasks = {}
 
+user_mode = {}
+
 download_last_edit = 0
 upload_last_edit = 0
 
@@ -868,6 +870,7 @@ async def cb(_, query: CallbackQuery):
         elif data in ["file", "video"]:
 
             user_id = query.from_user.id  
+            user_mode[user_id] = data
 
             if await is_banned(user_id):
                 return await query.answer("🚫 𝗕𝗮𝗻𝗻𝗲𝗱 𝗨𝘀𝗲𝗿", show_alert=True)
@@ -875,7 +878,9 @@ async def cb(_, query: CallbackQuery):
             if user_id not in user_files:
                 return await query.answer("Eʀʀᴏʀ ‼️ Sᴇɴᴅ Fɪʟᴇ Aɢᴀɪɴ", show_alert=True)
 
-            msg = user_files[user_id]   
+            msg = user_files[user_id]  
+            
+            mode = user_mode.get(user_id, "file")
 
             active_tasks[user_id] = True
  
