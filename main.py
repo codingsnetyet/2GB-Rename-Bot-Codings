@@ -950,12 +950,12 @@ async def cb(_, query: CallbackQuery):
            # -------- SEND FILE -------- #
             try:
                 if is_video:
-                 await msg.reply_video(
-                     video=final,
-                    caption=caption,
-                    thumb=thumb_path,
-                    progress=prog
-                 )
+                    await msg.reply_video(
+                        video=final,
+                        caption=caption,
+                        thumb=thumb_path,
+                        progress=prog
+                    )
                 else:
                     await msg.reply_document(
                         document=final,
