@@ -908,85 +908,85 @@ async def cb(_, query: CallbackQuery):
                 thumb_path = None
 
         # -------- UPLOAD START -------- #
-await query.message.edit_text("📤 Uᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...")
+            await query.message.edit_text("📤 Uᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...")
 
-start_time = time.time()
-last_edit = 0
+            start_time = time.time()
+            last_edit = 0
+  
+            async def prog(current, total):
+                nonlocal last_edit
 
-async def prog(current, total):
-    nonlocal last_edit
+                if not active_tasks.get(user_id):
+                    return
 
-    if not active_tasks.get(user_id):
-        return
+                now = time.time()
 
-    now = time.time()
+               # prevent flood
+                if now - last_edit < 1:
+                    return
 
-    # prevent flood
-    if now - last_edit < 1:
-        return
+                last_edit = now
 
-    last_edit = now
+                percent, speed, eta = calc_progress(current, total, start_time)
 
-    percent, speed, eta = calc_progress(current, total, start_time)
+                filled = int(percent / 10)
+                bar = "⬢" * filled + "⬡" * (10 - filled)
 
-    filled = int(percent / 10)
-    bar = "⬢" * filled + "⬡" * (10 - filled)
+                text = f"""{bar}
+           📤 Uᴘʟᴏᴀᴅɪɴɢ...
 
-    text = f"""{bar}
-📤 Uᴘʟᴏᴀᴅɪɴɢ...
+           <b>» 𝗗𝗼𝗻𝗲</b> : {round(percent, 2)}%
+           <b>» 𝗦𝗶𝘇𝗲</b> : {humanbytes(current)} | {humanbytes(total)}
+           <b>» 𝗦𝗽𝗲𝗲𝗱</b> : {humanbytes(speed)}/s
+           <b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
+           """
 
-<b>» 𝗗𝗼𝗻𝗲</b> : {round(percent, 2)}%
-<b>» 𝗦𝗶𝘇𝗲</b> : {humanbytes(current)} | {humanbytes(total)}
-<b>» 𝗦𝗽𝗲𝗲𝗱</b> : {humanbytes(speed)}/s
-<b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
-"""
-
-    try:
-        await query.message.edit_text(text)
-    except:
-        pass
-
-
-# -------- SEND FILE -------- #
-try:
-    if is_video:
-        await msg.reply_video(
-            video=final,
-            caption=caption,
-            thumb=thumb_path,
-            progress=prog
-        )
-    else:
-        await msg.reply_document(
-            document=final,
-            file_name=new_name,
-            caption=caption,
-            thumb=thumb_path,
-            progress=prog
-        )
-except Exception as e:
-    print("Upload Error:", e)
-    await query.message.edit_text("❌ Upload Failed")
-    return
+                try:
+                    await query.message.edit_text(text)
+                except:
+                   pass
 
 
-# -------- CLEANUP -------- #
-try:
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    if os.path.exists(final):
-        os.remove(final)
-except:
-    pass
+           # -------- SEND FILE -------- #
+            try:
+                if is_video:
+                 await msg.reply_video(
+                     video=final,
+                    caption=caption,
+                    thumb=thumb_path,
+                    progress=prog
+                 )
+                else:
+                    await msg.reply_document(
+                        document=final,
+                        file_name=new_name,
+                        caption=caption,
+                        thumb=thumb_path,
+                        progress=prog
+                    )
+            except Exception as e:
+                print("Upload Error:", e)
+                await query.message.edit_text("Eʀʀᴏʀ ‼️, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇ @Mr_Mohammed_29")
+                return
 
-try:
-    if thumb_path and os.path.exists(thumb_path):
-        os.remove(thumb_path)
-except:
-    pass
 
-await query.message.delete()
-active_tasks.pop(user_id, None)
+            # -------- CLEANUP -------- #
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                if os.path.exists(final):
+                    os.remove(final)
+            except:
+                pass
+ 
+            try:
+                if thumb_path and os.path.exists(thumb_path):
+                    os.remove(thumb_path)
+            except:
+                pass
+
+            await query.message.delete()
+            active_tasks.pop(user_id, None)
 
 # ---------------- RUN ----------------
 keep_alive()
