@@ -678,10 +678,10 @@ async def logs(_, msg):
 async def broadcast(_, msg):
 
     if msg.from_user.id != OWNER_ID:
-        return await msg.reply("❌ You are not authorized")
+        return
 
     if len(msg.command) < 2:
-        return await msg.reply("𝘁𝘆𝗽𝗲 𝘄𝗶𝘁𝗵 /broadcast 𝗺𝗲𝘀𝘀𝗮𝗴𝗲")
+        return await msg.reply("type with /broadcast message")
 
     text = msg.text.split(None, 1)[1]
 
@@ -692,9 +692,9 @@ async def broadcast(_, msg):
     await msg.reply("📢 Broadcast started...")
 
     try:
-        users_list = get_all_users()
+        users_list = await get_all_users()   
 
-        async for user in users_list:
+        for user in users_list:              
             total += 1
             try:
                 await bot.send_message(user["_id"], text)
@@ -702,16 +702,11 @@ async def broadcast(_, msg):
             except:
                 failed += 1
 
-        log_event(f"⏳️ Broadcast Sent: {text[:30]}")
-
         await msg.reply(
-            f"""
-⏳️ Broadcast Completed
-
-◇ Total Users: {total}
-◇ Successful: {success}
-◇ Unsuccessful: {failed}
-"""
+            f"✅ Broadcast Completed\n\n"
+            f"Total: {total}\n"
+            f"Success: {success}\n"
+            f"Failed: {failed}"
         )
 
     except Exception as e:
