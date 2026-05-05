@@ -78,7 +78,7 @@ async def is_premium(uid):
 # ------------------------- #
 
 async def get_all_users():
-    return users.find({})
+    return await users.find({}).to_list(length=None)
     
 # ------------------------- #
 # Don't Remove Credit 
