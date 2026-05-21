@@ -19,7 +19,7 @@ if not os.path.exists("downloads"):
 
 if not os.path.exists("thumbs"):
     os.makedirs("thumbs")
-    
+
 START_TIME = time.time()
 
 # ------------------------- #
@@ -47,8 +47,18 @@ async def get_ping():
 from PIL import Image
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
+from pyrogram.enums import ChatMemberStatus
 
 active_tasks = {}
+
+# ---------------- FORCE SUB ---------------- #
+
+# -------- MAX FILE LIMIT -------- #
+
+MAX_FILE_SIZE = 2097152000  # 2GB 
+
+FORCE_SUB_CHANNEL = None
+FREE_MODE = True
 
 user_mode = {}
 
@@ -79,7 +89,7 @@ def parse_duration(value: str):
     return None
 
 # ------------------------- #
-    
+
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 def get_home_text(user):
@@ -111,7 +121,7 @@ def get_home_buttons():
             InlineKeyboardButton('sᴏᴜʀᴄᴇ', callback_data='source')
         ]
     ])
-    
+
 from pyrogram.types import CallbackQuery
 
 from config import (
@@ -123,6 +133,8 @@ from config import (
     LOG_CHANNEL,
     UPDATE_CHANNEL
 )
+
+ADMINS = [OWNER_ID]
 
 user_files = {}
 
@@ -257,15 +269,145 @@ bot = Client(
     "rename-bot",
     api_id=API_ID,
     api_hash=API_HASH,
-    bot_token=BOT_TOKEN
+    bot_token=BOT_TOKEN,
     workers=100,
     sleep_threshold=30,
     max_concurrent_transmissions=20
 )
 
+# ---------------- CHECK FORCE SUB ---------------- #
+
+async def check_force_sub(client, user_id):
+
+    # If no force sub enabled
+    if not FORCE_SUB_CHANNEL:
+        return True
+
+    try:
+        member = await client.get_chat_member(
+            FORCE_SUB_CHANNEL,
+            user_id
+        )
+
+        # User joined
+        if member.status in [
+            ChatMemberStatus.MEMBER,
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ]:
+            return True
+
+        return False
+
+    except Exception as e:
+        print("FORCE SUB ERROR:", e)
+        return False
+
+# ---------------- FORCE SUB COMMANDS ---------------- #
+
+@bot.on_message(filters.private & filters.command("fsub"))
+async def add_fsub(client, message):
+
+    global FORCE_SUB_CHANNEL
+
+    if message.from_user.id not in ADMINS:
+        return
+
+    if len(message.command) < 2:
+        return await message.reply_text(
+            "ᴛᴇxᴛ ᴡɪᴛʜ\n/fsub Cʜᴀɴɴᴇʟ_Usᴇʀɴᴀᴍᴇ"
+        )
+
+    channel = message.command[1]
+
+    if not channel.startswith("@"):
+        channel = "@" + channel
+
+    FORCE_SUB_CHANNEL = channel
+
+    await message.reply_text(
+        f"✅ Fᴏʀᴄᴇ Sᴜʙsᴄʀɪʙᴇᴅ Cʜᴀɴɴᴇʟ Aᴅᴅᴇᴅ\n\nCʜᴀɴɴᴇʟ : {channel}"
+    )
+
+
+@bot.on_message(filters.private & filters.command("nofsub"))
+async def remove_fsub(client, message):
+
+    global FORCE_SUB_CHANNEL
+
+    if message.from_user.id not in ADMINS:
+        return
+
+    FORCE_SUB_CHANNEL = None
+
+    await message.reply_text(
+        "✅ Fᴏʀᴄᴇ Sᴜʙsᴄʀɪʙᴇᴅ Cʜᴀɴɴᴇʟ Rᴇᴍᴏᴠᴇᴅ"
+    )
+
+# ---------------- FREE MODE ---------------- #
+
+@bot.on_message(filters.private & filters.command("freemode"))
+async def free_mode(client, message):
+
+    global FREE_MODE
+
+    if message.from_user.id not in ADMINS:
+        return
+
+    FREE_MODE = True
+
+    await message.reply_text(
+        "✅ Fʀᴇᴇ Mᴏᴅᴇ Eɴᴀʙʟᴇᴅ\n\n ○ Nᴏᴡ Usᴇʀs Cᴀɴ Usᴇ Tʜᴇ Bᴏᴛ ○"
+    )
+
+
+@bot.on_message(filters.private & filters.command("disablemode"))
+async def disable_mode(client, message):
+
+    global FREE_MODE
+
+    if message.from_user.id not in ADMINS:
+        return
+
+    FREE_MODE = False
+
+    await message.reply_text(
+        "🚫 Fʀᴇᴇ Mᴏᴅᴇ Dɪsᴀʙʟᴇᴅ\n\n ○ Nᴏᴡ Usᴇʀs Cᴀɴɴᴏᴛ Usᴇ Tʜᴇ Bᴏᴛ ○"
+    )
+
 # ---------------- START ----------------
 @bot.on_message(filters.command("start"))
-async def start(_, message):
+async def start(client, message):
+
+    # ---------------- DISABLE MODE ---------------- #
+
+    if not FREE_MODE:
+
+        if message.from_user.id not in ADMINS:
+            return await message.reply_text(
+                "🚫 Fʀᴇᴇ Mᴏᴅᴇ Dɪsᴀʙʟᴇᴅ Bʏ Oᴡɴᴇʀ\n\n ● Nᴏᴡ Yᴏᴜ Cᴀɴɴᴏᴛ Usᴇ Tʜɪs Bᴏᴛ ●"
+            )
+
+    # ---------------- FORCE SUB CHECK ---------------- #
+
+    if message.from_user.id not in ADMINS:
+
+        joined = await check_force_sub(client, message.from_user.id)
+
+        if joined is False:
+           buttons = InlineKeyboardMarkup([
+               [
+                   InlineKeyboardButton(
+                       "● Jᴏɪɴ Nᴏᴡ ●",
+                       url=f"https://t.me/{FORCE_SUB_CHANNEL.replace('@', '')}"
+                   )
+               ]
+           ])
+
+           return await message.reply_text(
+               "›› ‼️ ʟᴏᴏᴋs ʟɪᴋᴇ ʏᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴊᴏɪɴᴇᴅ ᴛᴏ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ʏᴇᴛ, sᴜʙsᴄʀɪʙᴇ ɴᴏw.",
+               reply_markup=buttons
+           )
 
     try:
         if await is_banned(message.from_user.id):
@@ -321,15 +463,22 @@ async def set_caption(_, msg):
         return await msg.reply(
             "Gɪᴠᴇ Tʜᴇ Cᴀᴘᴛɪᴏɴ\n\nExᴀᴍᴘʟᴇ:- /set_caption Welcome To Jinwoo Rename Bot @Anime_UpdatesAU"
         )
-        
+
     cap = msg.text.split(None, 1)[1]
     await set_user(msg.from_user.id, {"caption": cap})
     await msg.reply("Cᴀᴘᴛɪᴏɴ Sᴀᴠᴇᴅ ✅️")
 
 @bot.on_message(filters.command("see_caption"))
 async def see_caption(_, msg):
+
     user = await get_user(msg.from_user.id) or {}
-    await msg.reply(user.get("caption", "Nᴏ Cᴀᴘᴛɪᴏɴ Is Tʜᴇʀᴇ, Aᴅᴅ Nᴏᴡ"))
+
+    caption = user.get("caption")
+
+    if not caption:
+        caption = "Nᴏ Cᴀᴘᴛɪᴏɴ Is Tʜᴇʀᴇ, Aᴅᴅ Nᴏᴡ"
+
+    await msg.reply(caption)
 
 @bot.on_message(filters.command("del_caption"))
 async def del_caption(_, msg):
@@ -361,6 +510,7 @@ async def set_suffix(_, msg):
 
 @bot.on_message(filters.command("see_prefix"))
 async def see_prefix(_, msg):
+
     user = await get_user(msg.from_user.id) or {}
     prefix = user.get("prefix")
 
@@ -372,12 +522,14 @@ async def see_prefix(_, msg):
 
 @bot.on_message(filters.command("del_prefix"))
 async def del_prefix(_, msg):
+
     await set_user(msg.from_user.id, {"prefix": ""})
     await msg.reply("Pʀᴇғɪx Dᴇʟᴇᴛᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ ⚡️")
 
 
 @bot.on_message(filters.command("see_suffix"))
 async def see_suffix(_, msg):
+
     user = await get_user(msg.from_user.id) or {}
     suffix = user.get("suffix")
 
@@ -389,6 +541,7 @@ async def see_suffix(_, msg):
 
 @bot.on_message(filters.command("del_suffix"))
 async def del_suffix(_, msg):
+
     await set_user(msg.from_user.id, {"suffix": ""})
     await msg.reply("Sᴜғғɪx Dᴇʟᴇᴛᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ ⚡️")
 
@@ -436,6 +589,7 @@ async def metadata(_, msg):
 # ---------------- METADATA SETTERS ----------------
 @bot.on_message(filters.command("settitle"))
 async def settitle(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /settitle Encoded By @Anime_UpdatesAU")
 
@@ -446,6 +600,7 @@ async def settitle(_, msg):
 
 @bot.on_message(filters.command("setauthor"))
 async def setauthor(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Aᴜᴛʜᴏʀ\n\nExᴀᴍᴩʟᴇ:- /setauthor @Anime_UpdatesAU")
 
@@ -456,6 +611,7 @@ async def setauthor(_, msg):
 
 @bot.on_message(filters.command("setartist"))
 async def setartist(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Aʀᴛɪꜱᴛ\n\nExᴀᴍᴩʟᴇ:- /setartist @Anime_UpdatesAU")
 
@@ -466,6 +622,7 @@ async def setartist(_, msg):
 
 @bot.on_message(filters.command("setaudio"))
 async def setaudio(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Aᴜᴅɪᴏ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setaudio @Anime_UpdatesAU")
 
@@ -476,6 +633,7 @@ async def setaudio(_, msg):
 
 @bot.on_message(filters.command("setsubtitle"))
 async def setsubtitle(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Sᴜʙᴛɪᴛʟᴇ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setsubtitle @Anime_UpdatesAU")
 
@@ -486,6 +644,7 @@ async def setsubtitle(_, msg):
 
 @bot.on_message(filters.command("setvideo"))
 async def setvideo(_, msg):
+
     if len(msg.command) < 2:
         return await msg.reply("Gɪᴠᴇ Tʜᴇ Vɪᴅᴇᴏ Tɪᴛʟᴇ\n\nExᴀᴍᴩʟᴇ:- /setvideo Encoded by @Anime_UpdatesAU")
 
@@ -530,16 +689,18 @@ async def del_dump(_, msg):
         del dump_channels[msg.from_user.id]
 
     await msg.reply("✅ Dump Channel Deleted")
-            
+
 # ---------------- THUMB ----------------
 @bot.on_message(filters.photo)
 async def save_thumb(_, msg):
+
     await set_user(msg.from_user.id, {"thumb": msg.photo.file_id})
     await msg.reply("✅️ Tʜᴜᴍʙɴᴀɪʟ Sᴀᴠᴇᴅ")
 
 
 @bot.on_message(filters.command("view_thumb"))
 async def view_thumb(_, msg):
+
     user = await get_user(msg.from_user.id) or {}
     if user.get("thumb"):
         await msg.reply_photo(user["thumb"])
@@ -549,6 +710,7 @@ async def view_thumb(_, msg):
 
 @bot.on_message(filters.command("del_thumb"))
 async def del_thumb(_, msg):
+
     await set_user(msg.from_user.id, {"thumb": ""})
     await msg.reply("❌️ Tʜᴜᴍʙɴᴀɪʟ Dᴇʟᴇᴛᴇᴅ")
 
@@ -558,9 +720,19 @@ async def choose(_, msg):
 
     if await is_banned(msg.from_user.id):
         return await msg.reply("🚫 Yᴏᴜ Aʀᴇ Bᴀɴɴᴇᴅ.")
-        
+        # -------- FILE SIZE CHECK -------- #
+
+    media = msg.document or msg.video
+
+    if media.file_size > MAX_FILE_SIZE:
+        return await msg.reply_text(
+            f"❌ Fɪʟᴇ Tᴏᴏ Lᴀʀɢᴇ\n\n"
+            f"📦 Mᴀx Sᴜᴘᴘᴏʀᴛᴇᴅ Sɪᴢᴇ: 2GB\n"
+            f"📁 Yᴏᴜʀ Fɪʟᴇ: {humanbytes(media.file_size)}"
+        )
+
     user_files[msg.from_user.id] = msg
-    
+
     buttons = InlineKeyboardMarkup([
         [
             InlineKeyboardButton("📄 𝗗𝗼𝗰𝘂𝗺𝗲𝗻𝘁", callback_data="file"),
@@ -590,7 +762,7 @@ async def status(_, msg):
         return 
 
     users_count = await users.count_documents({})
-    
+
     if not await get_premium_status(msg.from_user.id):
         premium = "No"
     else:
@@ -681,7 +853,7 @@ async def logs(_, msg):
 
     except:
         await msg.reply("𝗡𝗢 𝗟𝗢𝗚𝗦 𝗙𝗢𝗨𝗡𝗗 ❌")
-        
+
 # -------------BROADCAST------------ #
 @bot.on_message(filters.command("broadcast"))
 async def broadcast(_, msg):
@@ -720,7 +892,7 @@ async def broadcast(_, msg):
 
     except Exception as e:
         await msg.reply(f"❌ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗘𝗿𝗿𝗼𝗿: {e}")
-        
+
 # ---------- Callback --------------- #
 @bot.on_callback_query()
 async def cb(_, query: CallbackQuery):
@@ -744,7 +916,7 @@ async def cb(_, query: CallbackQuery):
                     get_home_text(user),
         reply_markup=get_home_buttons()
                 )
-            
+
         elif data == "about":
 
             text = """
@@ -763,7 +935,7 @@ async def cb(_, query: CallbackQuery):
 
             await query.message.edit_text(
                 text,
-                
+
         reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("🏠 Hᴏᴍᴇ", callback_data="home")],
                     [InlineKeyboardButton("❌ Cʟᴏsᴇ", callback_data="close")]
@@ -777,7 +949,7 @@ async def cb(_, query: CallbackQuery):
             await query.message.edit_text(
                 "• 𝗥𝗲𝗽𝗼 •",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔗 𝗢𝗽𝗲𝗻 𝗦𝗼𝘂𝗿𝗰𝗲", url="https://github.com/MD-Developer-yt/Rename-Bot-2GB")]
+            [InlineKeyboardButton("🔗 𝗢𝗽𝗲𝗻 𝗦𝗼𝘂𝗿𝗰𝗲", url="https://github.com/Naruto-Uzumaki-Yt/rename-bot")]
              ])
             )
 
@@ -829,14 +1001,14 @@ async def cb(_, query: CallbackQuery):
             await query.answer()
 
             users_count = await users.count_documents({})
-            
+
             if not await get_premium_status(query.from_user.id):
                 premium = "No"
             else:
                 premium = "Yes"
 
             ping = await get_ping()
-    
+
             text = f"""
         📊 𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀
 
@@ -860,6 +1032,28 @@ async def cb(_, query: CallbackQuery):
         elif data == "close":
             await query.message.delete()
 
+        elif data.startswith("lb_"):
+
+                    period = data.split("_")[1]
+
+                    text = await generate_leaderboard(period)
+
+                    buttons = InlineKeyboardMarkup([
+                        [
+                            InlineKeyboardButton("📅 Today", callback_data="lb_today"),
+                            InlineKeyboardButton("📆 Weekly", callback_data="lb_weekly")
+                        ],
+                        [
+                            InlineKeyboardButton("🗓 Monthly", callback_data="lb_monthly"),
+                            InlineKeyboardButton("🏆 All Time", callback_data="lb_alltime")
+                        ]
+                    ])
+
+                    await query.message.edit_text(
+                        text,
+                        reply_markup=buttons
+                    )  
+
         elif data.startswith("cancel_"):
 
             uid = int(data.split("_")[1])
@@ -868,9 +1062,9 @@ async def cb(_, query: CallbackQuery):
 
             await query.message.edit_text("𝗣𝗿𝗼𝗰𝗲𝘀𝘀 𝗖𝗮𝗻𝗰𝗲𝗹𝗹𝗲𝗱")
             return
-            
+
      # ----------- Callback -------------- #
-            
+
         elif data in ["file", "video"]:
 
             user_id = query.from_user.id  
@@ -883,11 +1077,11 @@ async def cb(_, query: CallbackQuery):
                 return await query.answer("Eʀʀᴏʀ ‼️ Sᴇɴᴅ Fɪʟᴇ Aɢᴀɪɴ", show_alert=True)
 
             msg = user_files[user_id]  
-            
+
             mode = user_mode.get(user_id, "file")
 
             active_tasks[user_id] = True
- 
+
             file = msg.document or msg.video
             is_video = msg.video is not None  
 
@@ -896,7 +1090,7 @@ async def cb(_, query: CallbackQuery):
             await query.message.edit_text(
                 "📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ...",
         reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("😞 Cᴀɴᴄᴇʟ", callback_data=f"cancel_{user_id}")]
+                    [InlineKeyboardButton("Cᴀɴᴄᴇʟ", callback_data=f"cancel_{user_id}")]
                 ])
             )
 
@@ -909,11 +1103,11 @@ async def cb(_, query: CallbackQuery):
 
                 if not active_tasks.get(user_id):
                     raise Exception("Cancelled")
-    
+
                 now = time.time()
 
                 # 🔥 prevent too frequent edits
-                if now - download_last_edit < 1:
+                if now - download_last_edit < 2:
                     return
                 download_last_edit = now
 
@@ -922,13 +1116,15 @@ async def cb(_, query: CallbackQuery):
                 filled = int(percent / 10)
                 bar = "⬢" * filled + "⬡" * (10 - filled)
 
-                text = f"""{bar}
-            📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ...
-            <b>» 𝗗𝗼𝗻𝗲</b> : {round(percent, 2)}%
-            <b>» 𝗦𝗶𝘇𝗲</b> : {humanbytes(current)} | {humanbytes(total)}
-            <b>» 𝗦𝗽𝗲𝗲𝗱</b> : {humanbytes(speed)}/s
-            <b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
-            """
+                text = f"""
+{bar}
+📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ...
+
+» 𝗗𝗼𝗻𝗲 : {round(percent, 1)}%
+» 𝗦𝗶𝘇𝗲 : {humanbytes(current)} | {humanbytes(total)}
+» 𝗦𝗽𝗲𝗲𝗱 : {humanbytes(speed)}/s
+» 𝗘𝗧𝗔 : {time_formatter(eta)}
+"""
 
                 try:
                     await query.message.edit_text(text, parse_mode=ParseMode.HTML)
@@ -940,7 +1136,7 @@ async def cb(_, query: CallbackQuery):
             except Exception as e:
                 await query.message.edit_text("❌ Download Cancelled")
                 return
-                
+
             user = await get_user(user_id) or {}
 
             prefix = user.get("prefix", "")
@@ -958,7 +1154,7 @@ async def cb(_, query: CallbackQuery):
             else:
                 new_name = f"{prefix}{base_name}{suffix}{ext}"
             output = f"temp_{user_id}_{new_name}"
-            
+
             final = add_metadata(
                 file_path,
                 output,
@@ -969,7 +1165,7 @@ async def cb(_, query: CallbackQuery):
                 user.get("subtitle", ""),
                 user.get("video", "")
             )
-            
+
             if not os.path.exists(final) or os.path.getsize(final) < 100000:
                 final = file_path
 
@@ -1003,7 +1199,7 @@ async def cb(_, query: CallbackQuery):
 
             start_time = time.time()
             last_edit = 0
-  
+
             async def prog(current, total):
 
                 global upload_last_edit
@@ -1014,7 +1210,7 @@ async def cb(_, query: CallbackQuery):
                 now = time.time()
 
                 # 🔥 prevent spam edits
-                if now - upload_last_edit < 1:
+                if now - upload_last_edit < 2:
                     return
                 upload_last_edit = now
 
@@ -1023,13 +1219,15 @@ async def cb(_, query: CallbackQuery):
                 filled = int(percent / 10)
                 bar = "⬢" * filled + "⬡" * (10 - filled)
 
-                text = f"""{bar}
-            📤 Uᴘʟᴏᴀᴅɪɴɢ...
-            <b>» 𝗗𝗼𝗻𝗲</b> : {round(percent, 2)}%
-            <b>» 𝗦𝗶𝘇𝗲</b> : {humanbytes(current)} | {humanbytes(total)}
-            <b>» 𝗦𝗽𝗲𝗲𝗱</b> : {humanbytes(speed)}/s
-            <b>» 𝗘𝗧𝗔</b> : {time_formatter(eta)}
-             """
+                text = f"""
+{bar}
+📤 Uᴘʟᴏᴀᴅɪɴɢ...
+
+» 𝗗𝗼𝗻𝗲 : {round(percent, 1)}%
+» 𝗦𝗶𝘇𝗲 : {humanbytes(current)} | {humanbytes(total)}
+» 𝗦𝗽𝗲𝗲𝗱 : {humanbytes(speed)}/s
+» 𝗘𝗧𝗔 : {time_formatter(eta)}
+"""
 
                 try:
                     await query.message.edit_text(text, parse_mode=ParseMode.HTML)
@@ -1037,7 +1235,10 @@ async def cb(_, query: CallbackQuery):
                     pass
            # -------- SEND FILE -------- #
             try:
+
+               # -------- VIDEO MODE -------- #
                 if mode == "video":
+
                     await msg.reply_video(
                         video=final,
                         caption=caption,
@@ -1047,52 +1248,59 @@ async def cb(_, query: CallbackQuery):
                         height=height,
                         supports_streaming=True,
                         progress=prog
-                    )  
+                    )
 
                     dump_id = dump_channels.get(user_id)
 
                     if dump_id:
                         try:
-                            await bot.copy_message(
+                            await bot.send_video(
                                 chat_id=int(dump_id),
-                  
-            from_chat_id=msg.chat.id,
-                                message_id=msg.id
+                                video=final,
+                                caption=caption,
+                                thumb=thumb_path,
+                                duration=duration,
+                                width=width,
+                                height=height,
+                                supports_streaming=True,
                             )
 
                         except Exception as e:
                             print("Dump Error:", e)
 
+               # -------- DOCUMENT MODE -------- #
                 else:
-                     await msg.reply_document(
-                         document=final,
-                         file_name=new_name,
-                         caption=caption,
-                         thumb=thumb_path,
-                         progress=prog
-                     )
-        
-                     dump_id = dump_channels.get(user_id)
 
-                     if dump_id:
-                         try:
-                              await bot.send_document(
-                                  chat_id=int(dump_id),
-                                  document=final,
-                                  file_name=new_name,
-                                  caption=caption,
-                                  thumb=thumb_path
-                              )  
+                    await msg.reply_document(
+                        document=final,
+                        file_name=new_name,
+                        caption=caption,
+                        thumb=thumb_path,
+                        progress=prog
+                    )
 
-                         except Exception as e:
-                             print("Dump Error:", e)
+                    dump_id = dump_channels.get(user_id)
+
+                    if dump_id:
+                        try:
+                            await bot.send_document(
+                                chat_id=int(dump_id),
+                                document=final,
+                                file_name=new_name,
+                                caption=caption,
+                                thumb=thumb_path
+                            )
+
+                        except Exception as e:
+                            print("Dump Error:", e)
 
             except Exception as e:
+
                 await query.message.edit_text(
                     f"❌ Uᴘʟᴏᴀᴅ Cᴀɴᴄᴇʟʟᴇᴅ\n\n{str(e)}"
                 )
                 return
-    
+
                 try:
                     await query.message.edit_text(
                         "Eʀʀᴏʀ ‼️, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ @Mr_Mohammed_29"
@@ -1105,6 +1313,7 @@ async def cb(_, query: CallbackQuery):
 
 
             # -------- CLEANUP -------- #
+
             try:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -1112,19 +1321,30 @@ async def cb(_, query: CallbackQuery):
                     os.remove(final)
             except Exception:
                 pass
- 
+
             try:
                 if thumb_path and os.path.exists(thumb_path):
                     os.remove(thumb_path)
             except Exception:
                 pass
 
+            # -------- UPDATE LEADERBOARD -------- #
+
+            leaderboard_data["today"][user_id] += 1
+            leaderboard_data["weekly"][user_id] += 1
+            leaderboard_data["monthly"][user_id] += 1
+            leaderboard_data["alltime"][user_id] += 1
+
             await query.message.delete()
             active_tasks.pop(user_id, None)
             user_mode.pop(user_id, None)
-            
+
     except Exception as e:
-       print("Callback Error:", e)
+
+        if "MESSAGE_NOT_MODIFIED" in str(e):
+            return
+
+        print("Callback Error:", e)
 
 # ---------------- LEADERBOARD DATA ---------------- #
 
@@ -1136,15 +1356,6 @@ leaderboard_data = {
     "monthly": defaultdict(int),
     "alltime": defaultdict(int)
 }
-
-# ---------------- UPDATE STATS ---------------- #
-# ADD THIS AFTER SUCCESSFUL UPLOAD
-
-leaderboard_data["today"][user_id] += 1
-leaderboard_data["weekly"][user_id] += 1
-leaderboard_data["monthly"][user_id] += 1
-leaderboard_data["alltime"][user_id] += 1
-
 
 # ---------------- LEADERBOARD FUNCTION ---------------- #
 
@@ -1205,34 +1416,6 @@ async def leaderboard(_, msg):
         text,
         reply_markup=buttons
     )
-
-
-# ---------------- LEADERBOARD BUTTONS ---------------- #
-# ADD INSIDE YOUR CALLBACK QUERY FUNCTION
-
-elif data.startswith("lb_"):
-
-    period = data.split("_")[1]
-
-    text = await generate_leaderboard(period)
-
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("📅 Today", callback_data="lb_today"),
-            InlineKeyboardButton("📆 Weekly", callback_data="lb_weekly")
-        ],
-        [
-            InlineKeyboardButton("🗓 Monthly", callback_data="lb_monthly"),
-            InlineKeyboardButton("🏆 All Time", callback_data="lb_alltime")
-        ]
-    ])
-
-    await query.message.edit_text(
-        text,
-        reply_markup=buttons
-    )
-
-
 # ---------------- USER INFO ---------------- #
 
 @bot.on_message(filters.private & filters.command("info"))
@@ -1280,7 +1463,7 @@ async def user_info(_, msg):
         [
             InlineKeyboardButton(
                 "🌐 Vɪᴇᴡ Pʀᴏғɪʟᴇ",
-                url=f"tg://user?id={user.id}"
+                url=f"https://t.me/{user.username}"
             )
         ]
     ])
@@ -1289,82 +1472,6 @@ async def user_info(_, msg):
         text,
         reply_markup=buttons
         )
-
-# ---------------- MEDIAINFO ---------------- #
-
-@bot.on_message(filters.private & filters.command("mediainfo"))
-async def mediainfo(_, msg):
-
-    replied = msg.reply_to_message
-
-    if not replied:
-        return await msg.reply(
-            "❌ Rᴇᴘʟʏ Tᴏ A Vɪᴅᴇᴏ Oʀ Dᴏᴄᴜᴍᴇɴᴛ"
-        )
-
-    media = replied.video or replied.document
-
-    if not media:
-        return await msg.reply(
-            "❌ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ Mᴇᴅɪᴀ"
-        )
-
-    file_path = await replied.download()
-
-    try:
-        probe = ffmpeg.probe(file_path)
-
-        format_data = probe.get("format", {})
-        streams = probe.get("streams", [])
-
-        video_stream = next(
-            (x for x in streams if x["codec_type"] == "video"),
-            None
-        )
-
-        audio_stream = next(
-            (x for x in streams if x["codec_type"] == "audio"),
-            None
-        )
-
-        duration = int(float(format_data.get("duration", 0)))
-        size = humanbytes(int(format_data.get("size", 0)))
-
-        text = f"""
-📂 Mᴇᴅɪᴀ Iɴғᴏ
-
-━━━━━━━━━━━━━━━
-➣ Fɪʟᴇ Nᴀᴍᴇ:
-{media.file_name}
-
-━━━━━━━━━━━━━━━
-➣ Sɪᴢᴇ: {size}
-➣ Dᴜʀᴀᴛɪᴏɴ: {time_formatter(duration)}
-
-━━━━━━━━━━━━━━━
-🎬 Vɪᴅᴇᴏ Dᴇᴛᴀɪʟs
-
-➣ Cᴏᴅᴇᴄ: {video_stream.get('codec_name', 'Unknown') if video_stream else 'Unknown'}
-➣ Rᴇsᴏʟᴜᴛɪᴏɴ: {video_stream.get('width', 0)}x{video_stream.get('height', 0) if video_stream else 0}
-➣ FPS: {video_stream.get('r_frame_rate', 'Unknown') if video_stream else 'Unknown'}
-
-━━━━━━━━━━━━━━━
-🔊 Aᴜᴅɪᴏ Dᴇᴛᴀɪʟs
-
-➣ Cᴏᴅᴇᴄ: {audio_stream.get('codec_name', 'Unknown') if audio_stream else 'Unknown'}
-➣ Cʜᴀɴɴᴇʟs: {audio_stream.get('channels', 'Unknown') if audio_stream else 'Unknown'}
-"""
-
-        await msg.reply_text(text)
-
-    except Exception as e:
-        await msg.reply(f"❌ Eʀʀᴏʀ:\n{e}")
-
-    try:
-        os.remove(file_path)
-    except:
-        pass
-
 
 # ---------------- DONATE ---------------- #
 
@@ -1379,12 +1486,17 @@ Tᴏ Sᴜᴘᴘᴏʀᴛ Tʜᴇ Dᴇᴠᴇʟᴏᴘᴇʀ,
 Yᴏᴜ Cᴀɴ Dᴏɴᴀᴛᴇ ❤️
 
 ━━━━━━━━━━━━━━━
-➣ UPI ID:
-9963812392@axl
 
-➣ Developer:
-@Mr_Mohammed_29
+➣ ᴜᴘɪ ɪᴅ:
+<code>mohammed.1006@superyes</code>
+
+➣ ǫʀ ᴄᴏᴅᴇ:
+<a href='https://telegra.ph/file/2197f68092b7161075d2d-34f98b9f2e12216868.jpg'>Click Here</a>
+
 ━━━━━━━━━━━━━━━
+
+Aғᴛᴇʀ Pᴀʏᴍᴇɴᴛ Sᴇɴᴅ Sᴄʀᴇᴇɴsʜᴏᴛ
+Tᴏ Dᴇᴠᴇʟᴏᴘᴇʀ
 """
 
     buttons = InlineKeyboardMarkup([
@@ -1398,7 +1510,8 @@ Yᴏᴜ Cᴀɴ Dᴏɴᴀᴛᴇ ❤️
 
     await msg.reply_text(
         text,
-        reply_markup=buttons
+        reply_markup=buttons,
+        disable_web_page_preview=True
     )
 
 
@@ -1417,12 +1530,13 @@ async def chatid(_, msg):
 """
 
     await msg.reply_text(text)
-    
+
 # ---------------- RUN ----------------
 keep_alive()
 
 print("BOT STARTED 🚀")
 bot.run()
+
 # ------------------------- #
 # Don't Remove Credit 
 # Ask Doubt @AU_Bot_Discussion 
