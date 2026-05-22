@@ -37,7 +37,6 @@
 | `LOG_CHANNEL`   | Channel ID [ex -108176543210]              |
 
 </details>
---------------------
 
 ## ✨ Commands
 
@@ -86,7 +85,6 @@ logs - ᴠɪᴇᴡ ʙᴏᴛ ʟᴏɢs (ᴀᴅᴍɪɴ).
 broadcast - sᴇɴᴅ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ᴜsᴇʀs (ᴀᴅᴍɪɴ).
 ```
 
----
 <details>
 <summary><h3>
 - <b> ᴅᴇᴘʟᴏʏᴍᴇɴᴛ </b>
@@ -98,5 +96,22 @@ broadcast - sᴇɴᴅ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ᴜsᴇʀs (ᴀᴅᴍɪɴ)
 <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
 </a></p>
 </details>
+
+═★═★═★═ **🏆 Credits** ═★═★═★═  
+
+- Developer: <a href="https://t.me/Mr_Mohammed_29"><b>ᴍᴏʜᴀᴍᴍᴇᴅ</b></a>  
+- Framework: <a href="https://docs.pyrogram.org/"><b>ᴘʏʀᴏɢʀᴀᴍ</b></a>  
+
+---
+
+---
+
+## Fork and ⭐ this repo 
+<p align="center">
+  If you like this bot, give it a ⭐ on GitHub to support the project!  
+  <a href="https://github.com/MD-Developer-yt/Rename-Bot-2GB" target="_blank">
+  </a>
+</p>
+# ᴅᴏɴ'ᴛ ʀᴇᴍᴏᴠᴇ ᴍʏ ᴄʀᴇᴅɪᴛ...
 ---
 
