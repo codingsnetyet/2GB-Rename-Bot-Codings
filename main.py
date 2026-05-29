@@ -1638,12 +1638,10 @@ async def cb(_, query: CallbackQuery):
 
             # -------- NORMAL RENAME -------- #
 
+            if caption:
+                new_name = f"{caption}{ext}"
             else:
-
-                if caption:
-                    new_name = f"{caption}{ext}"
-                else:
-                    new_name = f"{prefix}{base_name}{suffix}{ext}"
+                new_name = f"{prefix}{base_name}{suffix}{ext}"
             output = f"temp_{user_id}_{safe_name(new_name)}"
 
             if any([
