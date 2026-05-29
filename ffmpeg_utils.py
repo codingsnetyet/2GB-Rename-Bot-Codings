@@ -20,6 +20,9 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
             codec="copy",
             map_metadata="-1",
 
+            # ✅ KEEP ORIGINAL STREAMS
+            map="0",
+            
             **{
                 "metadata": f"title={title}",
                 "metadata:g": f"artist={artist}",
@@ -27,6 +30,10 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                 "metadata:s:a:0": f"title={audio}",
                 "metadata:s:s:0": f"title={subtitle}",
                 "metadata:s:v:0": f"title={video}",
+
+                # ✅ EXTRA METADATA
+                "metadata:g:2": "comment=Encoded By AU Bot",
+                "metadata:g:3": "encoder=FFmpeg",
             },
 
             movflags="+faststart",
@@ -67,6 +74,10 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                     "metadata": f"title={title}",
                     "metadata:g": f"artist={artist}",
                     "metadata:g:1": f"author={author}",
+
+                    # ✅ EXTRA METADATA
+                    "metadata:g:2": "comment=Encoded By @Anime_UpdatesAU",
+                    "metadata:g:3": "encoder=FFmpeg",
                 },
 
                 movflags="+faststart"
