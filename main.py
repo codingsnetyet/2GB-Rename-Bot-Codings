@@ -1752,14 +1752,12 @@ async def cb(_, query: CallbackQuery):
                         api_hash=API_HASH,
                         bot_token=token,
                         in_memory=True
-                   )
+                    )
 
-                   await personal_bot.start()
-
-                   upload_client = personal_bot
+                    await personal_bot.start()
+                    upload_client = personal_bot
  
                 except Exception as e:
-
                     print("ᴘᴇʀsᴏɴᴀʟ ʙᴏᴛ ᴇʀʀᴏʀ:", e)
    
                     upload_client = bot
