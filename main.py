@@ -1702,16 +1702,16 @@ async def cb(_, query: CallbackQuery):
 
                 nonlocal last_edit
 
-            if not active_tasks.get(user_id):
-                raise Exception("Cancelled")
+                if not active_tasks.get(user_id):
+                    raise Exception("Cancelled")
 
-            now = time.time()
+                now = time.time()
      
-           # prevent spam edits
-           if now - last_edit < 1:
-               return
-
-           last_edit = now
+                # prevent spam edits
+                if now - last_edit < 1:
+                    return
+  
+                last_edit = now
 
                 percent, speed, eta = calc_progress(current, total, start_time)
 
