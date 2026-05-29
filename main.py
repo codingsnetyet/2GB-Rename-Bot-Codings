@@ -1183,7 +1183,7 @@ async def cb(_, query: CallbackQuery):
         await query.answer()
     except:
         pass
-        
+
     data = query.data
 
     try:
@@ -1356,7 +1356,7 @@ async def cb(_, query: CallbackQuery):
                         "𝗠𝗔𝗜𝗡 ✅",
                         callback_data="ub_main"
                     ),
- 
+
                     InlineKeyboardButton(
                         "𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟",
                         callback_data="ub_personal"
@@ -1368,13 +1368,13 @@ async def cb(_, query: CallbackQuery):
                         callback_data="ub_bots"
                     )
                 ],
-                 
+
                 [
                     InlineKeyboardButton(
                         "𝗔𝗗𝗗 𝗕𝗢𝗧",
                         callback_data="ub_add"
                     ),
- 
+
                     InlineKeyboardButton(
                         "𝗗𝗘𝗟𝗘𝗧𝗘 𝗕𝗢𝗧",
                         callback_data="ub_delete"
@@ -1403,7 +1403,7 @@ async def cb(_, query: CallbackQuery):
             )
 
             mode = "PERSONAL"
-   
+
             selected_bot = upload_bots.get(query.from_user.id)
 
             if selected_bot:
@@ -1415,7 +1415,7 @@ async def cb(_, query: CallbackQuery):
                 query.from_user.id,
                 "Not set"
             )
- 
+
             text = f"""
         Cʜᴏᴏsᴇ ᴡʜɪᴄʜ ʙᴏᴛ sʜᴏᴜʟᴅ ᴜᴘʟᴏᴀᴅ ᴛʜᴇ ғɪɴɪsʜᴇᴅ ғɪʟᴇ
 
@@ -1431,14 +1431,14 @@ async def cb(_, query: CallbackQuery):
         Mᴀɪɴ ᴍᴏᴅᴇ ɴᴇᴇᴅs ᴍᴀɪɴ ʙᴏᴛ ᴀᴄᴄᴇss ɪғ ʏᴏᴜ ᴜsᴇ ᴅᴜᴍᴘ sᴏ ғɪʀsᴛ ᴍᴀᴋᴇ ᴛʜᴇ ʙᴏᴛ ᴀᴅᴍɪɴ!
         Pᴇʀsᴏɴᴀʟ ᴍᴏᴅᴇ ɴᴇᴇᴅs ʙᴏᴛʜ ᴍᴀɪɴ ʙᴏᴛ ᴀɴᴅ ᴄʜᴏsᴇɴ ᴜᴘʟᴏᴀᴅ ʙᴏᴛ ᴀs ᴀᴅᴍɪɴs ɪɴ ʏᴏᴜʀ ᴅᴜᴍᴘ ᴄʜᴀɴɴᴇʟ
         """
- 
+
             buttons = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(
                         "𝗠𝗔𝗜𝗡",
                         callback_data="ub_main"
                     ),
- 
+
                     InlineKeyboardButton(
                         "𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟 ✅",
                         callback_data="ub_personal"
@@ -1706,11 +1706,11 @@ async def cb(_, query: CallbackQuery):
                     raise Exception("Cancelled")
 
                 now = time.time()
-     
+
                 # prevent spam edits
                 if now - last_edit < 1:
                     return
-  
+
                 last_edit = now
 
                 percent, speed, eta = calc_progress(current, total, start_time)
@@ -1756,10 +1756,10 @@ async def cb(_, query: CallbackQuery):
 
                     await personal_bot.start()
                     upload_client = personal_bot
- 
+
                 except Exception as e:
                     print("ᴘᴇʀsᴏɴᴀʟ ʙᴏᴛ ᴇʀʀᴏʀ:", e)
-   
+
                     upload_client = bot
            # -------- SEND FILE -------- #
             try:
@@ -1835,7 +1835,7 @@ async def cb(_, query: CallbackQuery):
                     pass
 
                 return
-                
+
             finally:
 
                 if token:
