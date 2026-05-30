@@ -419,23 +419,27 @@ async def start(client, message):
 
         user = message.from_user
 
-        # ---------------- LOG CHANNEL MESSAGE ---------------- #
+        me = await client.get_me()
+
+        # safe user mention
+        user_mention = f"[{user.first_name}](tg://user?id={user.id})"
+
+        # safe bot mention
+        bot_mention = f"@{me.username}" if me.username else "Bot"
+
         try:
-            me = await client.get_me()
-            
             await client.send_message(
                 LOG_CHANNEL,
                 f"**--Nᴇᴡ Uꜱᴇʀ Sᴛᴀʀᴛᴇᴅ Tʜᴇ Bᴏᴛ--**\n\n"
-                f"Uꜱᴇʀ: {user.mention}\n"
+                f"Uꜱᴇʀ: {user_mention}\n"
                 f"Iᴅ: `{user.id}`\n"
-                f"Uɴ: @{user.username}\n\n"
+                f"Uɴ: @{user.username if user.username else 'N/A'}\n\n"
                 f"Dᴀᴛᴇ: {datetime.datetime.now().strftime('%d-%m-%Y')}\n"
                 f"Tɪᴍᴇ: {datetime.datetime.now().strftime('%H:%M:%S')}\n\n"
-                f"By: {client.mention}"
+                f"By: {bot_mention}"
             )
         except Exception as e:
             print("Log Error:", e)
-
 
         # ---------------- ANIMATION ----------------
         try:
