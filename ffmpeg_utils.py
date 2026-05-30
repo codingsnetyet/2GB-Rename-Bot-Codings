@@ -10,7 +10,6 @@ import os
 def add_metadata(input_file, output_file, title, author, artist, audio, subtitle, video):
 
     try:
-        # -------- STEP 1: FAST COPY -------- #
         stream = ffmpeg.input(input_file)
 
         stream = ffmpeg.output(
@@ -19,36 +18,34 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
 
             vcodec="copy",
             acodec="copy",
-            map="0",
+
+            map=["0:v:0", "0:a?", "0:s?"],  
+
             map_metadata="-1",
 
+            movflags="+faststart",
+
+            # ONLY GLOBAL METADATA (SAFE)
             **{
                 "metadata": f"title={title}",
                 "metadata:g": f"artist={artist}",
                 "metadata:g:1": f"author={author}",
-            },
-
-            movflags="+faststart",
-            avoid_negative_ts="make_zero"
+            }
         )
 
         ffmpeg.run(stream, overwrite_output=True)
 
-        # -------- STEP 2: VALIDATE OUTPUT -------- #
         if not os.path.exists(output_file):
-            raise Exception("Output not created")
+            return input_file
 
-        size = os.path.getsize(output_file)
-
-        if size < 100000:
-            raise Exception("Broken file")
+        if os.path.getsize(output_file) < 100000:
+            return input_file
 
         return output_file
 
     except Exception as e:
-        print("⚠️ Cᴏᴘʏ Fᴀɪʟᴇᴅ, Sᴡɪᴛᴄʜɪɴɢ Tᴏ Rᴇ-Eɴᴄᴏᴅᴇ:", e)
+        print("⚠️ COPY FAILED:", e)
 
-        # -------- STEP 3: FALLBACK RE-ENCODE -------- #
         try:
             stream = ffmpeg.input(input_file)
 
@@ -58,14 +55,13 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
 
                 vcodec="copy",
                 acodec="copy",
-                map="0",
 
                 movflags="+faststart",
-                
+
                 **{
-                    "metadata:s:a:0": f"title={audio}",
-                    "metadata:s:s:0": f"title={subtitle}",
-                    "metadata:s:v:0": f"title={video}"
+                    "metadata": f"title={title}",
+                    "metadata:g": f"artist={artist}",
+                    "metadata:g:1": f"author={author}",
                 }
             )
 
@@ -73,8 +69,9 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
             return output_file
 
         except Exception as e2:
-            print("❌ Rᴇ-Eɴᴄᴏᴅᴇ Aʟsᴏ Fᴀɪʟᴇᴅ:", e2)
+            print("❌ FALLBACK FAILED:", e2)
             return input_file
+
 
 # ------------------------- #
 # Don't Remove Credit 
