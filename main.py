@@ -1644,6 +1644,8 @@ async def cb(_, query: CallbackQuery):
 
             user = await get_user(user_id) or {}
 
+            thumb = user.get("thumb")
+
             prefix = user.get("prefix", "")
             suffix = user.get("suffix", "")
             caption = user.get("caption", "")
