@@ -17,7 +17,9 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
             stream,
             output_file,
 
-            codec="copy",
+            vcodec="copy",
+            acodec="copy",
+
             map_metadata="-1",
 
             **{
@@ -30,7 +32,6 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
             },
 
             movflags="+faststart",
-            fflags="+genpts",
             avoid_negative_ts="make_zero"
         )
 
@@ -58,18 +59,17 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                 stream,
                 output_file,
 
-                vcodec="libx264",
-                acodec="aac",
-                preset="ultrafast",
+                vcodec="copy",
+                acodec="copy",
 
-                # ✅ SAFE METADATA (LESS RISK)
+                movflags="+faststart",
+
+                # SAFE METADATA ONLY
                 **{
                     "metadata": f"title={title}",
                     "metadata:g": f"artist={artist}",
                     "metadata:g:1": f"author={author}",
-                },
-
-                movflags="+faststart"
+                }
             )
 
             ffmpeg.run(stream, overwrite_output=True, quiet=True)
