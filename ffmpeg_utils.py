@@ -35,7 +35,7 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
             avoid_negative_ts="make_zero"
         )
 
-        ffmpeg.run(stream, overwrite_output=True)
+        ffmpeg.run(stream, overwrite_output=True, quiet=True)
 
         # -------- STEP 2: VALIDATE OUTPUT -------- #
         if not os.path.exists(output_file):
@@ -72,7 +72,7 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                 }
             )
 
-            ffmpeg.run(stream, overwrite_output=True)
+            ffmpeg.run(stream, overwrite_output=True, quiet=True)
 
             return output_file
 
