@@ -1662,14 +1662,16 @@ async def cb(_, query: CallbackQuery):
                 new_name = f"{prefix}{base_name}{suffix}{ext}"
             output = f"temp_{user_id}_{safe_name(new_name)}"
 
-            if any([
+            metadata_enabled = any([
                 user.get("title"),
                 user.get("author"),
                 user.get("artist"),
                 user.get("audio"),
                 user.get("subtitle"),
                 user.get("video")
-            ]):
+            ])
+
+            if metadata_enabled:
                 final = add_metadata(
                     file_path,
                     output,
@@ -1680,13 +1682,17 @@ async def cb(_, query: CallbackQuery):
                     user.get("subtitle", ""),
                     user.get("video", "")
                 )
+
+                print(f"Original size: {os.path.getsize(file_path)}")
+                print(f"Final size: {os.path.getsize(final)}")
+
             else:
                 final = file_path
 
             if not os.path.exists(final) or os.path.getsize(final) < 100000:
                 final = file_path
 
-            thumb = user.get("thumb")
+                thumb = user.get("thumb")
 
         # -------- THUMB FIX -------- #
             thumb_path = None
