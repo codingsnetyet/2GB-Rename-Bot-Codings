@@ -1,3 +1,4 @@
+
 # ------------------------- #
 # Don't Remove Credit 
 # Ask Doubt @AU_Bot_Discussion 
@@ -9,69 +10,74 @@ import os
 
 def add_metadata(input_file, output_file, title, author, artist, audio, subtitle, video):
 
-    try:
-        stream = ffmpeg.input(input_file)
+try:  
+    # -------- STEP 1: FAST COPY -------- #  
+    stream = ffmpeg.input(input_file)  
 
-        stream = ffmpeg.output(
-            stream,
-            output_file,
+    stream = ffmpeg.output(  
+        stream,  
+        output_file,  
 
-            vcodec="copy",
-            acodec="copy",
+        vcodec="copy",  
+        acodec="copy",  
+        map="0",  
+        map_metadata="-1",  
 
-            map=["0:v:0", "0:a?", "0:s?"],  
+        **{  
+            "metadata": f"title={title}",  
+            "metadata:g": f"artist={artist}",  
+            "metadata:g:1": f"author={author}",  
+            "metadata:s:a:0": f"title={audio}",  
+            "metadata:s:s:0": f"title={subtitle}",  
+            "metadata:s:v:0": f"title={video}",  
+        },  
 
-            map_metadata="-1",
+        movflags="+faststart",  
+    )  
 
-            movflags="+faststart",
+    ffmpeg.run(stream, overwrite_output=True)  
 
-            # ONLY GLOBAL METADATA (SAFE)
-            **{
-                "metadata": f"title={title}",
-                "metadata:g": f"artist={artist}",
-                "metadata:g:1": f"author={author}",
-            }
-        )
+    # -------- STEP 2: VALIDATE OUTPUT -------- #  
+    if not os.path.exists(output_file):  
+        raise Exception("Output not created")  
 
-        ffmpeg.run(stream, overwrite_output=True)
+    size = os.path.getsize(output_file)  
 
-        if not os.path.exists(output_file):
-            return input_file
+    if size < 100000:  
+        raise Exception("Broken file")  
 
-        if os.path.getsize(output_file) < 100000:
-            return input_file
+    return output_file  
 
-        return output_file
+except Exception as e:  
+    print("⚠️ Cᴏᴘʏ Fᴀɪʟᴇᴅ, Sᴡɪᴛᴄʜɪɴɢ Tᴏ Rᴇ-Eɴᴄᴏᴅᴇ:", e)  
 
-    except Exception as e:
-        print("⚠️ COPY FAILED:", e)
+    # -------- STEP 3: FALLBACK RE-ENCODE -------- #  
+    try:  
+        stream = ffmpeg.input(input_file)  
 
-        try:
-            stream = ffmpeg.input(input_file)
+        stream = ffmpeg.output(  
+            stream,  
+            output_file,  
 
-            stream = ffmpeg.output(
-                stream,
-                output_file,
+            vcodec="copy",  
+            acodec="copy",  
+            map="0",  
 
-                vcodec="copy",
-                acodec="copy",
+            movflags="+faststart",  
+              
+            **{  
+                "metadata": f"title={title}",  
+                "metadata:g": f"artist={artist}",  
+                "metadata:g:1": f"author={author}",  
+            }  
+        )  
 
-                movflags="+faststart",
+        ffmpeg.run(stream, overwrite_output=True)  
+        return output_file  
 
-                **{
-                    "metadata": f"title={title}",
-                    "metadata:g": f"artist={artist}",
-                    "metadata:g:1": f"author={author}",
-                }
-            )
-
-            ffmpeg.run(stream, overwrite_output=True)
-            return output_file
-
-        except Exception as e2:
-            print("❌ FALLBACK FAILED:", e2)
-            return input_file
-
+    except Exception as e2:  
+        print("❌ Rᴇ-Eɴᴄᴏᴅᴇ Aʟsᴏ Fᴀɪʟᴇᴅ:", e2)  
+        return input_file
 
 # ------------------------- #
 # Don't Remove Credit 
