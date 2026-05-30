@@ -1694,8 +1694,6 @@ async def cb(_, query: CallbackQuery):
             if not os.path.exists(final) or os.path.getsize(final) < 100000:
                 final = file_path
 
-                thumb = user.get("thumb")
-
         # -------- THUMB FIX -------- #
             thumb_path = None
             try:
