@@ -1685,9 +1685,6 @@ async def cb(_, query: CallbackQuery):
                     user.get("video", "")
                 )
 
-                print(f"Original size: {os.path.getsize(file_path)}")
-                print(f"Final size: {os.path.getsize(final)}")
-
             else:
                 final = file_path
 
@@ -1708,7 +1705,6 @@ async def cb(_, query: CallbackQuery):
                 print("Thumbnail Error:", e)
                 thumb_path = None
 
-            # fallback safety
             if not thumb_path or not os.path.exists(thumb_path):
                 thumb_path = None
 
