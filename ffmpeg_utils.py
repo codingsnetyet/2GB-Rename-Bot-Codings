@@ -19,7 +19,7 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
 
             vcodec="copy",
             acodec="copy",
-
+            map="0",
             map_metadata="-1",
 
             **{
