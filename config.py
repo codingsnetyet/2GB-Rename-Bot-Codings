@@ -1,17 +1,10 @@
-
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
 
 import os
-
-# ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
-# ------------------------- #
 
 class Config:
 
@@ -25,13 +18,6 @@ class Config:
     # ---------------- DATABASE ----------------
     MONGO_URI = os.getenv("MONGO_URI")
 
-    
-# ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
-# ------------------------- #
-
     # ---------------- CHANNELS ----------------
     _raw_update = os.getenv("UPDATE_CHANNEL", "https://t.me/Anime_UpdatesAU")
 
@@ -44,8 +30,19 @@ class Config:
 
     LOG_CHANNEL = os.getenv("LOG_CHANNEL")
 
+
+# ---------------- EXPORT VARIABLES ----------------
+
+API_ID = Config.API_ID
+API_HASH = Config.API_HASH
+BOT_TOKEN = Config.BOT_TOKEN
+OWNER_ID = Config.OWNER_ID
+MONGO_URI = Config.MONGO_URI
+LOG_CHANNEL = Config.LOG_CHANNEL
+UPDATE_CHANNEL = Config.UPDATE_CHANNEL
+
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
