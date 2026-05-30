@@ -421,6 +421,8 @@ async def start(client, message):
 
         # ---------------- LOG CHANNEL MESSAGE ---------------- #
         try:
+            me = await client.get_me()
+            
             await client.send_message(
                 LOG_CHANNEL,
                 f"**--Nᴇᴡ Uꜱᴇʀ Sᴛᴀʀᴛᴇᴅ Tʜᴇ Bᴏᴛ--**\n\n"
