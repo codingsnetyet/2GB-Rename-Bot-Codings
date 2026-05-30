@@ -419,6 +419,22 @@ async def start(client, message):
 
         user = message.from_user
 
+        # ---------------- LOG CHANNEL MESSAGE ---------------- #
+        try:
+            await client.send_message(
+                Config.LOG_CHANNEL,
+                f"**--Nᴇᴡ Uꜱᴇʀ Sᴛᴀʀᴛᴇᴅ Tʜᴇ Bᴏᴛ--**\n\n"
+                f"Uꜱᴇʀ: {user.mention}\n"
+                f"Iᴅ: `{user.id}`\n"
+                f"Uɴ: @{user.username}\n\n"
+                f"Dᴀᴛᴇ: {datetime.datetime.now().strftime('%d-%m-%Y')}\n"
+                f"Tɪᴍᴇ: {datetime.datetime.now().strftime('%H:%M:%S')}\n\n"
+                f"By: {client.mention}"
+            )
+        except Exception as e:
+            print("Log Error:", e)
+
+
         # ---------------- ANIMATION ----------------
         try:
             m = await message.reply_text("Sʜᴀᴅᴏᴡ Oғ Mᴏɴᴀʀᴄʜ. . .")
@@ -1767,6 +1783,8 @@ async def cb(_, query: CallbackQuery):
                # -------- VIDEO MODE -------- #
                 if mode == "video":
 
+                    await asyncio.sleep(0) 
+
                     await upload_client.send_video(
                         chat_id=msg.chat.id,
                         video=final,
@@ -1777,7 +1795,8 @@ async def cb(_, query: CallbackQuery):
                         height=height,
                         supports_streaming=True,
                         has_spoiler=False,
-                        progress=prog
+                        progress=prog, 
+                        disable_notification=True
                     )
 
                     dump_id = dump_channels.get(user_id)
@@ -1801,13 +1820,16 @@ async def cb(_, query: CallbackQuery):
                # -------- DOCUMENT MODE -------- #
                 else:
 
+                    await asyncio.sleep(0) 
+
                     await upload_client.send_document(
                         chat_id=msg.chat.id,
                         document=final,
                         file_name=new_name,
                         caption=caption,
                         thumb=thumb_path,
-                        progress=prog
+                        progress=prog,
+                        disable_notification=True
                     )
 
                     dump_id = dump_channels.get(user_id)
@@ -1838,12 +1860,6 @@ async def cb(_, query: CallbackQuery):
 
             finally:
 
-                if token:
-                    try:
-                        await personal_bot.stop()
-                    except:
-                        pass
-
             # -------- FILE SIZE -------- #
 
             file_size = 0
@@ -1868,6 +1884,14 @@ async def cb(_, query: CallbackQuery):
                     os.remove(thumb_path)
             except Exception:
                 pass
+
+            
+           # -------- STOP PERSONAL BOT -------- #
+            if token:
+                try:
+                    await personal_bot.stop()
+                except:
+                    pass
 
             # -------- STATS COUNTER -------- #
 
