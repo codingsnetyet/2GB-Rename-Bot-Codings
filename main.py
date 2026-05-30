@@ -422,7 +422,7 @@ async def start(client, message):
         # ---------------- LOG CHANNEL MESSAGE ---------------- #
         try:
             await client.send_message(
-                Config.LOG_CHANNEL,
+                LOG_CHANNEL,
                 f"**--Nᴇᴡ Uꜱᴇʀ Sᴛᴀʀᴛᴇᴅ Tʜᴇ Bᴏᴛ--**\n\n"
                 f"Uꜱᴇʀ: {user.mention}\n"
                 f"Iᴅ: `{user.id}`\n"
