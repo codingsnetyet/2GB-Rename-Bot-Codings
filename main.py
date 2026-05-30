@@ -1602,6 +1602,8 @@ async def cb(_, query: CallbackQuery):
 
             async def dprog(current, total):
 
+                await asyncio.sleep(0)
+
                 nonlocal last_edit
 
                 if not active_tasks.get(user_id):
@@ -1715,6 +1717,8 @@ async def cb(_, query: CallbackQuery):
             last_edit = 0
 
             async def prog(current, total):
+
+                await asyncio.sleep(0)
 
                 nonlocal last_edit
 
@@ -1859,39 +1863,35 @@ async def cb(_, query: CallbackQuery):
                 return
 
             finally:
-
-            # -------- FILE SIZE -------- #
-
-            file_size = 0
-
-            try:
-                file_size = os.path.getsize(final)
-            except:
-                pass
-
-            # -------- CLEANUP -------- #
-
-            try:
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                if os.path.exists(final):
-                    os.remove(final)
-            except Exception:
-                pass
-
-            try:
-                if thumb_path and os.path.exists(thumb_path):
-                    os.remove(thumb_path)
-            except Exception:
-                pass
-
-            
-           # -------- STOP PERSONAL BOT -------- #
-            if token:
+                
+                # -------- FILE SIZE -------- #
+                file_size = 0
                 try:
-                    await personal_bot.stop()
+                    file_size = os.path.getsize(final)
                 except:
                     pass
+
+                # -------- CLEANUP -------- #
+
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                    if os.path.exists(final):
+                        os.remove(final)
+                except Exception:
+                    pass
+
+                try:
+                    if thumb_path and os.path.exists(thumb_path):
+                        os.remove(thumb_path)
+                except Exception:
+                    pass
+                # -------- STOP PERSONAL BOT -------- #
+                if token:
+                    try:
+                        await personal_bot.stop()
+                    except:
+                        pass
 
             # -------- STATS COUNTER -------- #
 
