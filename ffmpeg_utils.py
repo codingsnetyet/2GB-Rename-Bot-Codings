@@ -64,12 +64,14 @@ def add_metadata(input_file, output_file, title, author, artist, audio, subtitle
                 map="0",
 
                 movflags="+faststart",
-
-                # SAFE METADATA ONLY
+                
                 **{
                     "metadata": f"title={title}",
                     "metadata:g": f"artist={artist}",
                     "metadata:g:1": f"author={author}",
+                    "metadata:s:a:0": f"title={audio}",
+                    "metadata:s:s:0": f"title={subtitle}",
+                    "metadata:s:v:0": f"title={video}"
                 }
             )
 
