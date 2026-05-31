@@ -1014,6 +1014,9 @@ async def update_leaderboard(user_id):
                 "weekly": 1,
                 "monthly": 1,
                 "alltime": 1
+            },
+            "$set": {
+                "user_id": user_id
             }
         },
         upsert=True
@@ -1922,6 +1925,8 @@ async def cb(_, query: CallbackQuery):
 
 async def generate_leaderboard(period):
 
+    period = period.lower()
+
     users_data = db.leaderboard.find().sort(period, -1).limit(20)
 
     text = f"📈 Lᴇᴀᴅᴇʀʙᴏᴀʀᴅ: {period.upper()}\n\n"
@@ -1931,7 +1936,7 @@ async def generate_leaderboard(period):
 
     async for data in users_data:
 
-        uid = data["user_id"]
+        uid = data.get("user_id")
         count = data.get(period, 0)
 
         total_files += count
@@ -1939,7 +1944,6 @@ async def generate_leaderboard(period):
         try:
             user = await bot.get_users(uid)
             name = user.first_name[:25]
-
         except:
             name = "Unknown"
 
@@ -1948,7 +1952,6 @@ async def generate_leaderboard(period):
     text += f"\nTᴏᴛᴀʟ Sᴏʀᴛᴇᴅ Fɪʟᴇs: {total_files}"
 
     return text
-
 
 # ---------------- LEADERBOARD COMMAND ---------------- #
 
